@@ -26,6 +26,16 @@ const PrintHeader = styled.div`
   color: ${props => props.$color || '#ff6b6b'};
   font-weight: bold;
   font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const HeaderLogo = styled.img`
+  max-width: 175px;
+  max-height: 60px;
+  margin-bottom: 10px;
 `;
 
 const PrintFooter = styled.div`
@@ -88,7 +98,9 @@ function PrintArea() {
   return (
     <PrintAreaContainer ref={printAreaRef}>
       <PrintContent $style={style}>
-        <PrintHeader $color={style?.textColor}>{style?.headerText}</PrintHeader>
+        <PrintHeader $color={style?.textColor}>
+          {style?.headerText}
+        </PrintHeader>
         
         <GridContainer>
           {selectedPhotos.map((photoIndex, index) => (

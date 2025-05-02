@@ -25,6 +25,13 @@ const frameStyles = {
     textColor: '#ffffff',
     headerText: 'MOMENTS',
     footerText: 'CAPTURED FOREVER'
+  },
+  frameCNX: {
+    backgroundColor: '#003d5b',
+    borderColor: '#25e2cc',
+    textColor: '#ffffff',
+    headerText: 'CNX CATALYST',
+    footerText: 'CNX 만세'
   }
 };
 

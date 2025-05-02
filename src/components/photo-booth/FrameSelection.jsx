@@ -18,6 +18,7 @@ const FramesGrid = styled.div`
   justify-content: center;
   gap: 2rem;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
 `;
 
 const FrameItem = styled.div`
@@ -41,6 +42,45 @@ const FrameImage = styled.img`
   margin-bottom: 0.5rem;
 `;
 
+const FramePreview = styled.div`
+  width: 100%;
+  aspect-ratio: 1 / 1.4;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+  background-color: ${props => props.$backgroundColor || '#fff'};
+  border: 3px solid ${props => props.$borderColor || '#ddd'};
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+`;
+
+const FrameHeader = styled.div`
+  width: 100%;
+  color: ${props => props.$textColor || '#000'};
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const FrameFooter = styled.div`
+  width: 100%;
+  color: ${props => props.$textColor || '#000'};
+  text-align: center;
+  font-size: 0.8rem;
+  margin-top: 5px;
+`;
+
+const LogoImage = styled.img`
+  max-width: 80%;
+  max-height: 30px;
+  margin-bottom: 5px;
+`;
+
 const FrameLabel = styled.span`
   display: block;
   font-size: 1rem;
@@ -48,7 +88,7 @@ const FrameLabel = styled.span`
 `;
 
 function FrameSelection() {
-  const { selectFrame, isConnectionSecure } = usePhotoBooth();
+  const { selectFrame, isConnectionSecure, frameStyles } = usePhotoBooth();
 
   const handleFrameSelect = (frame) => {
     if (!isConnectionSecure) {
@@ -76,6 +116,11 @@ function FrameSelection() {
         <FrameItem onClick={() => handleFrameSelect('frame3')}>
           <FrameImage src="/images/frame3.svg" alt="모던 프레임" />
           <FrameLabel>모던 프레임</FrameLabel>
+        </FrameItem>
+        
+        <FrameItem onClick={() => handleFrameSelect('frameCNX')}>
+          <FrameImage src="/images/frameCNX.svg" alt="CNX 프레임" />
+          <FrameLabel>CNX 프레임</FrameLabel>
         </FrameItem>
       </FramesGrid>
     </FrameSelectionContainer>
