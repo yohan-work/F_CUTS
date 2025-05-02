@@ -10,7 +10,7 @@
 - 선택한 사진을 인쇄할 수 있는 기능
 
 ## Preview
-<img width="577" alt="image" src="https://github.com/user-attachments/assets/777a675d-2c69-476a-b9c0-92b6215903dc" />
+![step00](https://github.com/user-attachments/assets/49627b75-633a-4737-83f2-bc4943dad1ac)
 ![step01](https://github.com/user-attachments/assets/35a6d662-98dd-4019-acc9-4a7999135a77)
 ![step02](https://github.com/user-attachments/assets/7e30c804-c552-4201-943c-c31679ce9542)
 ![step03](https://github.com/user-attachments/assets/fd1bbc5a-6727-4406-b5fc-6fd532c50e2c)
