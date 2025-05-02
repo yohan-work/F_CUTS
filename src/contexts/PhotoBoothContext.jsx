@@ -38,6 +38,8 @@ export function PhotoBoothProvider({ children }) {
   const [countdown, setCountdown] = useState(5);
   const [isConnectionSecure, setIsConnectionSecure] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('');
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0); // 현재 촬영 중인 사진 인덱스
+  const [totalPhotos] = useState(8); // 총 촬영할 사진 수
   
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -120,6 +122,7 @@ export function PhotoBoothProvider({ children }) {
   // 촬영 시작
   const startCapturing = () => {
     setCapturedPhotos([]);
+    setCurrentPhotoIndex(1); // 첫 번째 사진 촬영 시작
     startCountdown();
   };
   
@@ -152,11 +155,13 @@ export function PhotoBoothProvider({ children }) {
     setCapturedPhotos(prev => {
       const newPhotos = [...prev, imageData];
       
-      if (newPhotos.length >= 8) {
+      if (newPhotos.length < totalPhotos) {
+        setCurrentPhotoIndex(newPhotos.length + 1); // 다음 사진 인덱스로 업데이트
+        setTimeout(startCountdown, 1000);
+      } else {
+        setCurrentPhotoIndex(0); // 촬영 완료 후 초기화
         setCurrentStep('photo-selection');
         stopCamera();
-      } else {
-        setTimeout(startCountdown, 1000);
       }
       
       return newPhotos;
@@ -185,6 +190,7 @@ export function PhotoBoothProvider({ children }) {
     setCurrentStep('photo-booth');
     setCapturedPhotos([]);
     setSelectedPhotos([]);
+    setCurrentPhotoIndex(0); // 인덱스 초기화
     startCamera();
   };
   
@@ -218,6 +224,8 @@ export function PhotoBoothProvider({ children }) {
         isConnectionSecure,
         connectionStatus,
         frameStyles,
+        currentPhotoIndex,
+        totalPhotos,
         videoRef,
         canvasRef,
         selectFrame,

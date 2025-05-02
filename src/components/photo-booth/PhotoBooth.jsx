@@ -52,6 +52,15 @@ const CountdownDisplay = styled.div`
   color: white;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const PhotoNumberLabel = styled.div`
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 `;
 
 const Controls = styled.div`
@@ -96,6 +105,30 @@ const GridItem = styled.div`
   background-position: center;
 `;
 
+const ProgressInfo = styled.div`
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #ff6b6b;
+`;
+
+const ProgressBarContainer = styled.div`
+  width: 100%;
+  height: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+`;
+
+const ProgressBarFill = styled.div`
+  height: 100%;
+  background-color: #ff6b6b;
+  border-radius: 5px;
+  transition: width 0.3s ease-in-out;
+`;
+
 function PhotoBooth() {
   const { 
     capturedPhotos,
@@ -104,7 +137,9 @@ function PhotoBooth() {
     videoRef,
     canvasRef,
     startCapturing,
-    retakePhotos
+    retakePhotos,
+    currentPhotoIndex,
+    totalPhotos
   } = usePhotoBooth();
 
   return (
@@ -129,10 +164,28 @@ function PhotoBooth() {
           <Video ref={videoRef} autoPlay playsInline />
           <Canvas ref={canvasRef} />
           {isCountingDown && (
-            <CountdownDisplay>{countdown}</CountdownDisplay>
+            <CountdownDisplay>
+              <PhotoNumberLabel>{currentPhotoIndex}번째 사진</PhotoNumberLabel>
+              {countdown}
+            </CountdownDisplay>
           )}
         </CameraView>
       </PhotoContainer>
+      
+      {/* 촬영 진행 상황 표시 */}
+      {capturedPhotos.length > 0 && (
+        <>
+          <ProgressInfo>
+            총 {totalPhotos}장 중 {capturedPhotos.length}장 촬영 완료
+            {currentPhotoIndex > 0 && capturedPhotos.length < totalPhotos && (
+              <span> (현재 {currentPhotoIndex}번째 사진 촬영 중)</span>
+            )}
+          </ProgressInfo>
+          <ProgressBarContainer>
+            <ProgressBarFill style={{ width: `${(capturedPhotos.length / totalPhotos) * 100}%` }} />
+          </ProgressBarContainer>
+        </>
+      )}
       
       <Controls>
         {capturedPhotos.length === 0 ? (
