@@ -20,14 +20,14 @@ const Title = styled.h2`
 const Subtitle = styled.p`
   font-size: 1.1rem;
   color: #666;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 `;
 
 const PhotoGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
-  margin: 2rem 0;
+  margin: 1.5rem 0;
   
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
@@ -64,9 +64,39 @@ const PhotoImage = styled.img`
   object-fit: cover;
 `;
 
+const PreviewSection = styled.div`
+  margin: 2rem 0;
+`;
+
+const PreviewTitle = styled.h3`
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #555;
+`;
+
 const PreviewContainer = styled.div`
   max-width: 300px;
-  margin: 2rem auto;
+  margin: 0 auto;
+  position: relative;
+`;
+
+const FrameContainer = styled.div`
+  background-color: ${props => props.$style?.backgroundColor || '#f8f8f8'};
+  border: 10px solid ${props => props.$style?.borderColor || '#ff6b6b'};
+  padding: 15px;
+  border-radius: 5px;
+  width: 100%;
+  aspect-ratio: 1 / 2;
+  position: relative;
+  box-sizing: border-box;
+`;
+
+const FrameHeader = styled.div`
+  text-align: center;
+  margin-bottom: 15px;
+  color: ${props => props.$color || '#ff6b6b'};
+  font-weight: bold;
+  font-size: 18px;
 `;
 
 const GridContainer = styled.div`
@@ -74,11 +104,8 @@ const GridContainer = styled.div`
   grid-template-columns: 1fr;
   grid-template-rows: repeat(4, 1fr);
   gap: 10px;
-  aspect-ratio: 1 / 2;
-  background-color: #fff;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: transparent;
+  margin: 0 auto;
 `;
 
 const GridItem = styled.div`
@@ -87,6 +114,22 @@ const GridItem = styled.div`
   overflow: hidden;
   background-size: cover;
   background-position: center;
+  border: 2px solid ${props => props.$borderColor || '#ff6b6b'};
+  aspect-ratio: 3/4;
+`;
+
+const FrameFooter = styled.div`
+  text-align: center;
+  margin-top: 15px;
+  color: ${props => props.$color || '#ff6b6b'};
+  font-size: 12px;
+`;
+
+const SelectedCount = styled.div`
+  font-size: 1.2rem;
+  margin: 1rem 0;
+  color: ${props => props.$complete ? '#28a745' : props.$hasSelection ? '#ff6b6b' : '#666'};
+  font-weight: ${props => props.$hasSelection ? 'bold' : 'normal'};
 `;
 
 const Controls = styled.div`
@@ -114,6 +157,11 @@ const Button = styled.button`
   &:hover {
     background-color: #ff5252;
   }
+  
+  &:disabled {
+    background-color: #ffb6b6;
+    cursor: not-allowed;
+  }
 `;
 
 function PhotoSelection() {
@@ -122,13 +170,27 @@ function PhotoSelection() {
     selectedPhotos, 
     togglePhotoSelection, 
     printPhotos, 
-    resetSession 
+    resetSession,
+    selectedFrame,
+    frameStyles
   } = usePhotoBooth();
+  
+  const frameStyle = frameStyles[selectedFrame];
+  const isSelectionComplete = selectedPhotos.length === 4;
 
   return (
     <SelectionContainer>
       <Title>사진 선택</Title>
       <Subtitle>마음에 드는 4장의 사진을 선택하세요</Subtitle>
+      
+      <SelectedCount 
+        $hasSelection={selectedPhotos.length > 0} 
+        $complete={isSelectionComplete}
+      >
+        {isSelectionComplete 
+          ? '선택 완료! 아래 미리보기를 확인하세요.' 
+          : `${selectedPhotos.length}/4 장 선택됨`}
+      </SelectedCount>
       
       <PhotoGrid>
         {capturedPhotos.map((photo, index) => (
@@ -142,24 +204,43 @@ function PhotoSelection() {
         ))}
       </PhotoGrid>
       
-      <PreviewContainer>
-        <GridContainer>
-          {[...Array(4)].map((_, index) => {
-            const selectedPhotoIndex = selectedPhotos[index];
-            const photoSrc = selectedPhotoIndex !== undefined ? capturedPhotos[selectedPhotoIndex] : null;
+      <PreviewSection>
+        <PreviewTitle>최종 미리보기</PreviewTitle>
+        <PreviewContainer>
+          <FrameContainer $style={frameStyle}>
+            <FrameHeader $color={frameStyle?.textColor}>
+              {frameStyle?.headerText}
+            </FrameHeader>
             
-            return (
-              <GridItem 
-                key={index}
-                style={photoSrc ? { backgroundImage: `url(${photoSrc})` } : {}}
-              />
-            );
-          })}
-        </GridContainer>
-      </PreviewContainer>
+            <GridContainer>
+              {[...Array(4)].map((_, index) => {
+                const selectedPhotoIndex = selectedPhotos[index];
+                const photoSrc = selectedPhotoIndex !== undefined ? capturedPhotos[selectedPhotoIndex] : null;
+                
+                return (
+                  <GridItem 
+                    key={index}
+                    style={photoSrc ? { backgroundImage: `url(${photoSrc})` } : {}}
+                    $borderColor={frameStyle?.borderColor}
+                  />
+                );
+              })}
+            </GridContainer>
+            
+            <FrameFooter $color={frameStyle?.textColor}>
+              {frameStyle?.footerText}
+            </FrameFooter>
+          </FrameContainer>
+        </PreviewContainer>
+      </PreviewSection>
       
       <Controls>
-        <Button onClick={printPhotos}>인쇄하기</Button>
+        <Button 
+          onClick={printPhotos} 
+          disabled={!isSelectionComplete}
+        >
+          인쇄하기
+        </Button>
         <Button onClick={resetSession}>처음으로</Button>
       </Controls>
     </SelectionContainer>
