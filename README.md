@@ -1,6 +1,6 @@
 # 인생 네컷 (FCUTS)
 
-React 기반의 인생 네컷 사진 촬영 웹 애플리케이션입니다.
+인생 네컷 사진 촬영 웹입니다.
 
 ## 기능
 
@@ -10,9 +10,10 @@ React 기반의 인생 네컷 사진 촬영 웹 애플리케이션입니다.
 - 선택한 사진을 인쇄할 수 있는 기능
 
 ## Preview
-![preview01](https://github.com/user-attachments/assets/b3a0c736-c70c-4667-b0c0-ccb46970fb8c)
-![preview02](https://github.com/user-attachments/assets/b36cc47a-7b0e-4416-a781-fcef9ab89086)
-![preview04](https://github.com/user-attachments/assets/5e39540e-bff2-4659-a444-e3d7576b1634)
+![step01](https://github.com/user-attachments/assets/35a6d662-98dd-4019-acc9-4a7999135a77)
+![step02](https://github.com/user-attachments/assets/7e30c804-c552-4201-943c-c31679ce9542)
+![step03](https://github.com/user-attachments/assets/fd1bbc5a-6727-4406-b5fc-6fd532c50e2c)
+
 
 
 ## 기술 스택
