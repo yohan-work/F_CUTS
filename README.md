@@ -9,6 +9,12 @@ React 기반의 인생 네컷 사진 촬영 웹 애플리케이션입니다.
 - 촬영된 여러 사진 중 4장 선택 기능
 - 선택한 사진을 인쇄할 수 있는 기능
 
+## Preview
+![preview01](https://github.com/user-attachments/assets/b3a0c736-c70c-4667-b0c0-ccb46970fb8c)
+![preview02](https://github.com/user-attachments/assets/b36cc47a-7b0e-4416-a781-fcef9ab89086)
+![preview04](https://github.com/user-attachments/assets/5e39540e-bff2-4659-a444-e3d7576b1634)
+
+
 ## 기술 스택
 
 - React 19
@@ -99,5 +105,4 @@ npm run preview
 - 모바일 기기에서 접속할 때는 HTTPS가 필요하며, `simple-https.cjs` 스크립트를 사용해 HTTPS 서버를 실행할 수 있습니다.
 
 ## 라이센스
-
-MIT 
+Yohan Choi.
