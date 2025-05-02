@@ -170,6 +170,7 @@ function PhotoSelection() {
     selectedPhotos, 
     togglePhotoSelection, 
     printPhotos, 
+    downloadPhotos,
     resetSession,
     selectedFrame,
     frameStyles
@@ -241,6 +242,15 @@ function PhotoSelection() {
         >
           인쇄하기
         </Button>
+        
+        <Button 
+          onClick={downloadPhotos} 
+          disabled={!isSelectionComplete}
+          style={{ backgroundColor: '#4a90e2' }}
+        >
+          다운로드
+        </Button>
+        
         <Button onClick={resetSession}>처음으로</Button>
       </Controls>
     </SelectionContainer>

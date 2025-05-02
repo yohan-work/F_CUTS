@@ -211,6 +211,176 @@ export function PhotoBoothProvider({ children }) {
     window.print();
   };
   
+  // 사진 다운로드 처리
+  const downloadPhotos = () => {
+    if (selectedPhotos.length !== 4) {
+      alert('4장의 사진을 선택해주세요.');
+      return;
+    }
+    
+    // 다운로드를 위한 캔버스 생성
+    const downloadCanvas = document.createElement('canvas');
+    const ctx = downloadCanvas.getContext('2d');
+    
+    // 프레임 스타일
+    const style = frameStyles[selectedFrame];
+    
+    // 캔버스 크기 설정 (더 높은 해상도로 조정)
+    const canvasWidth = 1600;
+    const canvasHeight = 3200;
+    downloadCanvas.width = canvasWidth;
+    downloadCanvas.height = canvasHeight;
+    
+    // 안티앨리어싱 활성화
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    // 배경색 채우기
+    ctx.fillStyle = style.backgroundColor || '#f8f8f8';
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    
+    // 테두리 그리기
+    ctx.strokeStyle = style.borderColor || '#ff6b6b';
+    ctx.lineWidth = 40;
+    ctx.strokeRect(20, 20, canvasWidth - 40, canvasHeight - 40);
+    
+    // 사진 그리기
+    const drawPhotos = async () => {
+      // 헤더 텍스트 추가 (더 위로 이동)
+      ctx.fillStyle = style.textColor || '#ff6b6b';
+      ctx.font = 'bold 96px Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(style.headerText || '', canvasWidth / 2, 140);
+      
+      // 사진 영역 계산
+      const padding = 120;
+      const photoAreaWidth = canvasWidth - (padding * 2);
+      
+      // 사진의 총 영역 계산
+      const totalPhotoArea = canvasHeight - 300; // 헤더와 푸터를 위한 공간 제외
+      
+      // 각 사진의 크기와 간격 계산
+      const photoCount = 4; // 항상 4장
+      const gap = 60; // 사진 사이 간격
+      const totalGapHeight = gap * (photoCount - 1);
+      const availableHeightForPhotos = totalPhotoArea - totalGapHeight;
+      const photoHeight = Math.floor(availableHeightForPhotos / photoCount);
+      const photoWidth = photoAreaWidth;
+      
+      // 첫 번째 사진의 y 위치 (헤더 아래 여백 포함)
+      const startY = 200;
+      
+      // 이미지 로드 및 그리기를 위한 프로미스 배열
+      const imagePromises = selectedPhotos.map((photoIndex, index) => {
+        return new Promise((resolve) => {
+          const photoSrc = capturedPhotos[photoIndex];
+          const img = new Image();
+          img.crossOrigin = 'Anonymous'; // CORS 이슈 방지
+          img.src = photoSrc;
+          
+          img.onload = () => {
+            // 원본 이미지의 비율 계산
+            const originalRatio = img.width / img.height;
+            
+            // 사진 위치 계산
+            const y = startY + index * (photoHeight + gap);
+            
+            // 이미지 비율을 유지하면서 그리기 위한 계산
+            let drawWidth = photoWidth - 20; // 테두리 고려
+            let drawHeight = photoHeight - 20; // 테두리 고려
+            let offsetX = 10;
+            let offsetY = 10;
+            
+            if (originalRatio > drawWidth / drawHeight) {
+              // 이미지가 더 넓은 경우
+              const newHeight = drawWidth / originalRatio;
+              offsetY += (drawHeight - newHeight) / 2;
+              drawHeight = newHeight;
+            } else {
+              // 이미지가 더 높은 경우
+              const newWidth = drawHeight * originalRatio;
+              offsetX += (drawWidth - newWidth) / 2;
+              drawWidth = newWidth;
+            }
+            
+            // 사진 영역 배경 (테두리용)
+            ctx.fillStyle = style.borderColor || '#ff6b6b';
+            ctx.fillRect(padding, y, photoWidth, photoHeight);
+            
+            // 사진 내부 배경 (여백용)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(padding + 5, y + 5, photoWidth - 10, photoHeight - 10);
+            
+            // 이미지 그리기 전에 클리핑 경로 설정 (모서리 둥글게)
+            ctx.save();
+            ctx.beginPath();
+            const radius = 10;
+            const rectX = padding + offsetX;
+            const rectY = y + offsetY;
+            ctx.moveTo(rectX + radius, rectY);
+            ctx.lineTo(rectX + drawWidth - radius, rectY);
+            ctx.quadraticCurveTo(rectX + drawWidth, rectY, rectX + drawWidth, rectY + radius);
+            ctx.lineTo(rectX + drawWidth, rectY + drawHeight - radius);
+            ctx.quadraticCurveTo(rectX + drawWidth, rectY + drawHeight, rectX + drawWidth - radius, rectY + drawHeight);
+            ctx.lineTo(rectX + radius, rectY + drawHeight);
+            ctx.quadraticCurveTo(rectX, rectY + drawHeight, rectX, rectY + drawHeight - radius);
+            ctx.lineTo(rectX, rectY + radius);
+            ctx.quadraticCurveTo(rectX, rectY, rectX + radius, rectY);
+            ctx.closePath();
+            ctx.clip();
+            
+            // 사진 그리기 (비율 유지)
+            ctx.drawImage(
+              img, 
+              padding + offsetX, 
+              y + offsetY, 
+              drawWidth, 
+              drawHeight
+            );
+            
+            // 클리핑 복원
+            ctx.restore();
+            
+            resolve();
+          };
+          
+          // 이미지 로드 실패 시 처리
+          img.onerror = () => {
+            console.error('이미지 로드 실패:', photoSrc);
+            resolve();
+          };
+        });
+      });
+      
+      // 모든 이미지가 로드될 때까지 기다림
+      await Promise.all(imagePromises);
+      
+      // 푸터 텍스트 추가
+      ctx.fillStyle = style.textColor || '#ff6b6b';
+      ctx.font = 'bold 72px Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(style.footerText || '', canvasWidth / 2, canvasHeight - 100);
+      
+      // 다운로드 처리
+      try {
+        const dataURL = downloadCanvas.toDataURL('image/png', 1.0);
+        const link = document.createElement('a');
+        link.download = `포토부스_${new Date().toISOString().slice(0, 10)}.png`;
+        link.href = dataURL;
+        document.body.appendChild(link); // Safari 호환성을 위해 추가
+        link.click();
+        setTimeout(() => {
+          document.body.removeChild(link);
+        }, 100);
+      } catch (err) {
+        console.error('다운로드 에러:', err);
+        alert('이미지 다운로드 중 오류가 발생했습니다.');
+      }
+    };
+    
+    drawPhotos();
+  };
+  
   // 처음으로 이동
   const resetSession = () => {
     stopCamera();
@@ -240,6 +410,7 @@ export function PhotoBoothProvider({ children }) {
         togglePhotoSelection,
         retakePhotos,
         printPhotos,
+        downloadPhotos,
         resetSession
       }}
     >
