@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import { usePhotoBooth } from '../../contexts/PhotoBoothContext';
+import React from "react";
+import styled from "styled-components";
+import { usePhotoBooth } from "../../contexts/PhotoBoothContext";
 
 const BoothContainer = styled.section`
   margin: 2rem auto;
@@ -16,7 +16,7 @@ const PhotoContainer = styled.div`
   align-items: center;
   gap: 2rem;
   margin-bottom: 1.5rem;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -79,7 +79,7 @@ const Button = styled.button`
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
-  
+
   &:hover {
     background-color: #ff5252;
   }
@@ -130,7 +130,7 @@ const ProgressBarFill = styled.div`
 `;
 
 function PhotoBooth() {
-  const { 
+  const {
     capturedPhotos,
     isCountingDown,
     countdown,
@@ -141,7 +141,7 @@ function PhotoBooth() {
     currentPhotoIndex,
     totalPhotos,
     selectedFrame,
-    frameStyles
+    frameStyles,
   } = usePhotoBooth();
 
   const style = frameStyles[selectedFrame];
@@ -150,26 +150,28 @@ function PhotoBooth() {
     <BoothContainer>
       <PhotoContainer>
         <PhotoFrame>
-          <GridContainer style={{ 
-            backgroundColor: style?.backgroundColor,
-            border: `2px solid ${style?.borderColor}`
-          }}>
+          <GridContainer
+            style={{
+              backgroundColor: style?.backgroundColor,
+              border: `2px solid ${style?.borderColor}`,
+            }}
+          >
             {[...Array(4)].map((_, index) => (
-              <GridItem 
+              <GridItem
                 key={index}
                 style={
-                  capturedPhotos[index] 
-                    ? { 
+                  capturedPhotos[index]
+                    ? {
                         backgroundImage: `url(${capturedPhotos[index]})`,
-                        border: `1px solid ${style?.borderColor}`
-                      } 
+                        border: `1px solid ${style?.borderColor}`,
+                      }
                     : { border: `1px solid ${style?.borderColor}` }
                 }
               />
             ))}
           </GridContainer>
         </PhotoFrame>
-        
+
         <CameraView>
           <Video ref={videoRef} autoPlay playsInline />
           <Canvas ref={canvasRef} />
@@ -181,44 +183,49 @@ function PhotoBooth() {
           )}
         </CameraView>
       </PhotoContainer>
-      
+
       {/* 촬영 진행 상황 표시 */}
       {capturedPhotos.length > 0 && (
         <>
-          <ProgressInfo style={{ color: style?.textColor || '#ff6b6b' }}>
+          <ProgressInfo style={{ color: style?.textColor || "#ff6b6b" }}>
             총 {totalPhotos}장 중 {capturedPhotos.length}장 촬영 완료
             {currentPhotoIndex > 0 && capturedPhotos.length < totalPhotos && (
-              <span> (현재 {currentPhotoIndex}번째 사진 촬영 중)</span>
+              <span style={{ display: "block" }}>
+                {" "}
+                (현재 {currentPhotoIndex}번째 사진 촬영 중)
+              </span>
             )}
           </ProgressInfo>
           <ProgressBarContainer>
-            <ProgressBarFill 
-              style={{ 
+            <ProgressBarFill
+              style={{
                 width: `${(capturedPhotos.length / totalPhotos) * 100}%`,
-                backgroundColor: style?.borderColor || '#ff6b6b'
-              }} 
+                backgroundColor: style?.borderColor || "#ff6b6b",
+              }}
             />
           </ProgressBarContainer>
         </>
       )}
-      
+
       <Controls>
         {capturedPhotos.length === 0 ? (
-          <Button 
+          <Button
             onClick={startCapturing}
-            style={{ 
-              backgroundColor: style?.borderColor || '#ff6b6b',
-              color: '#fff'
-            }}
+            style={
+              {
+                //   backgroundColor: style?.borderColor || "#ff6b6b",
+                //   color: "#fff",
+              }
+            }
           >
             촬영 시작
           </Button>
         ) : (
-          <Button 
+          <Button
             onClick={retakePhotos}
-            style={{ 
-              backgroundColor: style?.borderColor || '#ff6b6b',
-              color: '#fff'
+            style={{
+              backgroundColor: style?.borderColor || "#ff6b6b",
+              color: "#fff",
             }}
           >
             다시 촬영
@@ -229,4 +236,4 @@ function PhotoBooth() {
   );
 }
 
-export default PhotoBooth; 
+export default PhotoBooth;

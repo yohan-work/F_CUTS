@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const HeaderContainer = styled.header`
   text-align: center;
@@ -20,10 +20,10 @@ const Subtitle = styled.p`
 function Header() {
   return (
     <HeaderContainer>
-      <Title>인생 네컷</Title>
-      <Subtitle>나만의 특별한 순간을 네 장의 사진으로 담아보세요</Subtitle>
+      <Title>인생 네컷 for GCP</Title>
+      <Subtitle>GCP 만세 만세</Subtitle>
     </HeaderContainer>
   );
 }
 
-export default Header; 
+export default Header;
